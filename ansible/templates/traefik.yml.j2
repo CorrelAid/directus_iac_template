@@ -30,8 +30,9 @@ certificatesResolvers:
       tlschallenge: true
       httpchallenge:
         entrypoint: web
-      email: {{ directus_admin_email }}
+      email: {{ directus_admin_mail[server_index | int] }}
       storage: /etc/traefik/acme/acme.json
+      
 
 api:
   dashboard: false

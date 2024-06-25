@@ -14,7 +14,7 @@
 
 - name: Template traefik.yml
   ansible.builtin.template:
-    src: "templates/traefik.yml.jinja"
+    src: "templates/traefik.yml.j2"
     dest: "/home/{{ ansible_user }}/proxy/configs/traefik.yml"
     mode: "0775"
 
@@ -35,7 +35,7 @@
 
 - name: Template traefik docker compose to server
   ansible.builtin.template:
-    src: "templates/traefik-docker-compose.yml.jinja"
+    src: "templates/traefik-docker-compose.yml.j2"
     dest: "/home/{{ ansible_user }}/proxy/docker-compose.yml"
     mode: "0775"
 

@@ -85,10 +85,13 @@
           - docker==7.1.0
           - docker-compose==1.29.2
         state: present
-    - name: Deploy traefik
-      ansible.builtin.include_tasks: "tasks/deploy_traefik.yml"
+        
     - name: Set server index
       ansible.builtin.set_fact:
         server_index: "{{ 1 if 'prod' in ansible_hostname else 0 | int }}"
+
+    - name: Deploy traefik
+      ansible.builtin.include_tasks: "tasks/deploy_traefik.yml"
+    
     - name: Deploy directus
       ansible.builtin.include_tasks: "tasks/deploy_directus.yml"

@@ -63,3 +63,20 @@ def transfer_folder_via_ssh(ssh_client, local_folder, remote_folder, direction='
                 transferring from remote to local.")
     sftp_client.close()
 
+def run_command_via_ssh(ssh_client, command):
+    """
+    Run a command via SSH using the provided SSH client.
+    """
+    stdin, stdout, stderr = ssh_client.exec_command(command)
+    
+    # Capture and print command output
+    stdout_lines = stdout.readlines()
+    stderr_lines = stderr.readlines()
+    
+    for line in stdout_lines:
+        print(line, end="")
+    
+    for line in stderr_lines:
+        print(line, end="")
+    
+    return stdout_lines, stderr_lines

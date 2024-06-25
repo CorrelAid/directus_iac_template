@@ -36,7 +36,7 @@ resource "hcloud_firewall" "firewall" {
 resource "hcloud_primary_ip" "main" {
   count         = length(var.server)
   name          = var.server[count.index].name
-  datacenter    = "${var.server[count.index].location}-dc2"
+  datacenter    = var.server[count.index].location
   type          = "ipv4"
   assignee_type = "server"
   auto_delete   = true
@@ -49,7 +49,7 @@ resource "hcloud_server" "main" {
   name         = var.server[count.index].name
   image        = var.server[count.index].image
   server_type  = var.server[count.index].server_type
-  location     = var.server[count.index].location
+  datacenter     = var.server[count.index].location
   backups      = var.server[count.index].backups
   firewall_ids = [hcloud_firewall.firewall.id]
   public_net {

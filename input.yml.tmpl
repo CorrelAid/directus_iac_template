@@ -10,13 +10,13 @@ ssh_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCVoXdqUDqBIFFPRWS9ApA1zxzP9/PTiPh
 dev_server:
   server_type: cpx11
   image: ubuntu-22.04
-  location: nbg1
+  location: fsn1-dc14
   backups: true
   user: deployer
 prod_server:
   server_type: cpx11
   image: ubuntu-22.04
-  location: nbg1
+  location: fsn1-dc14
   backups: true
   user: deployer
 ### github
@@ -39,7 +39,7 @@ dev_smtp:
   password: password
   host: mail.your-server.de
   port: 587
-  
+
 
 prod_smtp:
   user: user
@@ -49,13 +49,13 @@ prod_smtp:
 ## directus config
 dev_directus:
   admin_mail: mail
-  admin_password: password
+  admin_pw: password
   key: key
   secret: secret
 
 prod_directus:
   admin_mail: mail
-  admin_password: password
+  admin_pw: password
   key: key
   secret: secret
 
