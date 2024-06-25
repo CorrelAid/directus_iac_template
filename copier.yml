@@ -78,5 +78,7 @@ vault_password:
 
 _tasks:
     - echo "{{    vault_password  }}" > ansible/.vault_pw
+    - rm README.md
+    - echo "# {{    project_name  }}" > README.md
     - ansible-vault encrypt ansible/group_vars/vault.yml 
     - rm input.yml.tmpl
