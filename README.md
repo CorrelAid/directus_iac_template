@@ -15,12 +15,20 @@
 
 3. Edit values of input data file
 
+See the file itself. Sensitive data will be stored in ansible vault and will not be stored in the answers.yml of copier. Be aware however, that they are still hardcoded in the input data file you edited. Best practice is to delete this file after you are done.
 
+4. Run copier
 
-5. Provide Terraform with the required tokens
+`copier copy --data-file input.yml --trust directus_iac_template testcopier copy --data-file input.yml --trust directus_iac_template <folder path>`
+
+4. Provide Terraform with the required tokens
+Depends on how you run terraform. If your run it locally, set the environment variables:
+
 ```
+# depends on which provider you chose
 # export DIGITALOCEAN_TOKEN=token 
-expprt HCLOUD_TOKEN=token
+export HCLOUD_TOKEN=token
 export HETZNER_DNS_API_TOKEN=token
 export GITHUB_TOKEN=token
 ```
+
