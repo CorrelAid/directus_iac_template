@@ -11,6 +11,7 @@ exclude_paths:
   - ansible/files/
   - ansible/templates/
   - "**/python-tools/**"
+  - copier.yml
 
 skip_list:
   - no-changed-when
