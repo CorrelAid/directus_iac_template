@@ -25,9 +25,9 @@ resource "github_repository_file" "hosts" {
   content = templatefile("inventory.tmpl", {
     servers = var.server
     {%+ if cloud == "digitalocean" -%}
-    ips     = {{ digitalocean_droplet.main  }}
+    ips     = digitalocean_droplet.main  
     {% elif cloud == "hetzner" %}
-    ips     = {{ hcloud_server.main }}
+    ips     =  hcloud_server.main 
     {% endif %}
   })
   commit_message      = "Add hosts"
