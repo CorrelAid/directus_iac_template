@@ -33,40 +33,47 @@ github:
     help: Provide github config (see input.yml)
     type: yaml 
     multiline: true
+    default: ---
     secret: true
 
 dev_smtp:
     help: Provide smtp config (see input.yml)
     type: yaml 
     multiline: true
+    default: ---
     secret: true
 
 prod_smtp:
     help: Provide smtp config (see input.yml)
     type: yaml 
     multiline: true
+    default: ---
     secret: true
 
 dev_directus:
     help: Provide directus config (see input.yml)
     type: yaml 
     multiline: true
+    default: ---
     secret: true
 
 prod_directus:
     help: Provide directus config (see input.yml)
     type: yaml 
     multiline: true
+    default: ---
     secret: true
 
 ssh_key:
     help: Provide ssh key to access the servers
     type: str
+    default: ""
     secret: true
 
 vault_password:
     help: Provide vault password
     type: str
+    default: ""
     secret: true
 
 _tasks:
