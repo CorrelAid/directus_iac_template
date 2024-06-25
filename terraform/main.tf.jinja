@@ -7,7 +7,11 @@ resource "hetznerdns_record" "dev" {
   count   = length(var.server)
   zone_id = data.hetznerdns_zone.dns_zone[count.index].id
   name    = var.dns[count.index].subdomain
+  {%+ if cloud == "digitalocean" -%}
   value   = digitalocean_droplet.main[count.index].ipv4_address
+  {% elif cloud == "hetzner" %}
+  value   = hcloud_server.main[count.index].ipv4_address
+  {% endif %}
   type    = "A"
 }
 
@@ -20,7 +24,11 @@ resource "github_repository_file" "hosts" {
   file       = "./ansible/hosts"
   content = templatefile("inventory.tmpl", {
     servers = var.server
-    ips     = digitalocean_droplet.main
+    {%+ if cloud == "digitalocean" -%}
+    ips     = {{ digitalocean_droplet.main  }}
+    {% elif cloud == "hetzner" %}
+    ips     = {{ hcloud_server.main }}
+    {% endif %}
   })
   commit_message      = "Add hosts"
   commit_author       = "Terraform User"

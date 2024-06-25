@@ -21,7 +21,7 @@ variable "server" {
         server_type = "{{dev_server.server_type}}"
         image       = "{{dev_server.image}}"
         location    = "{{dev_server.location}}"
-        backups     = {{dev_server.backups}}
+        backups     = {{dev_server.backups | lower}}
         user        = "{{dev_server.user}}"
       },
       {
@@ -29,7 +29,7 @@ variable "server" {
         server_type = "{{prod_server.server_type}}"
         image       = "{{prod_server.image}}"
         location    = "{{prod_server.location}}"
-        backups     = {{prod_server.backups}}
+        backups     = {{prod_server.backups | lower}}
         user        = "{{prod_server.user}}"
       }
     ]

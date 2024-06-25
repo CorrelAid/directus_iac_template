@@ -1,34 +1,35 @@
 ## General
 project_name: test
 cloud: hetzner
-vault_password: password
+vault_password: ijg086fzvü9uf08p6zc6p8üö
 
 ## tokens and vars for terraform
-ssh_key: ssh_key
+ssh_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCVoXdqUDqBIFFPRWS9ApA1zxzP9/PTiPh95/wxBTc4MxOrXKwA///OS80CCh+IrAtdwOiwHPEquSYjx0r5IiRZMMrL1vw2Q7iyp3ADRB5wqh3aRX1sp3qmEiCGcGIZ5sHJ5fPG37HlQ98Y61ugvxo8Cxelng7DrC0MgfXSO0lURICcgRHrM+mmfBV9sDb/CMBGyGByT1KMbP7OeQ/kiz6QvyoUlVvYfdm//m1qUvMzBOwUJrIiE0UCxJqSySFV2ykeOpg3VXuyEkaxcLEDWtcx8OT/MaDKKIw0NM9GsGe3NZL0Jz91ZkYL1eE69a8rkMUaidY2OA/0wk6rMK6H/agcgG3CnQZiynGMlAtxZ4iuFwG2ToWmpe8TyMkP7zHfptYNOI0rhjBmkLimxsR2bB8oIEutq/K1WwymfWrygWaNCMaDC22TiMEGTZTf6b7UBrjJApAGZ6faIx6ssbt47DQ6v6A5Rugryw7B4+IcCx/L4HCP5oFYqliXpviOW2jVDgE= mail@jstet.net
+
 ### server
 dev_server:
-  server_type: s-2vcpu-2gb
-  image: ubuntu-22-04-x64
-  location: fr1
+  server_type: cpx11
+  image: ubuntu-22.04
+  location: nbg1
   backups: true
   user: deployer
 prod_server:
-  server_type: s-2vcpu-2gb
-  image: ubuntu-22-04-x64
-  location: fr1
+  server_type: cpx11
+  image: ubuntu-22.04
+  location: nbg1
   backups: true
   user: deployer
 ### github
 github:
-  repo: repo
-  owner: owner
+  repo: test_repo
+  owner: CorrelAid
 ### dns
 dev_dns:
-  domain: domain
-  subdomain: subdomain
+  domain: does-this.work
+  subdomain: directus-template-dev
 prod_dns:
-  domain: domain
-  subdomain: subdomain
+  domain: does-this.work
+  subdomain: directus-template-prod
 
 
 ## vars for ansible

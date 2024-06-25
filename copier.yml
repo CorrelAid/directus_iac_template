@@ -77,7 +77,6 @@ vault_password:
     secret: true
 
 _tasks:
-    - echo "{{  ansible_vault_pw  }}" > ansible/.vault_pw
+    - echo "{{    vault_password  }}" > ansible/.vault_pw
     - ansible-vault encrypt ansible/group_vars/vault.yml 
     - rm input.yml.tmpl
-    - rm input.yml
