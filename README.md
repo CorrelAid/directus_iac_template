@@ -21,16 +21,18 @@ See the file itself. Sensitive data will be stored in ansible vault and will not
 
 4. Run copier
 
-`copier copy --data-file input.yml --trust directus_iac_template testcopier copy --data-file input.yml --trust directus_iac_template <folder path>`
+`copier copy --data-file input.yml --trust gh:CorrelAid/directus_iac_template <folder name>`
 
 5. cd into the resulting folder and set up pre-commit
 
-`pre-commit install`
+```
+git init
+pre-commit install
+```
 
 6. Create Repo in browser **with name specified in input data**, then and commit local files to new repo 
 
 ```
-git init
 git add .
 git commit -m "init"
 git remote add origin git@github.com:CorrelAid/<repo name>.git
