@@ -1,0 +1,114 @@
+services:
+  directus-cache:
+    restart: always
+    container_name: directus-cache
+    image: redis:6-alpine
+    networks:
+      - directus
+    ports:
+      - 6379
+
+  directus-database:
+    container_name: directus-database
+    ports:
+      - 8055
+    image: postgis/postgis:13-master
+    volumes:
+      - directus_database:/var/lib/postgresql/data
+    networks:
+      - directus
+    environment:
+      POSTGRES_USER: 'directus'
+      POSTGRES_PASSWORD: 'directus'
+      POSTGRES_DB: 'directus'
+    restart: always
+
+  directus:
+    restart: always
+    container_name: directus
+    build: 
+      context: ./ 
+    ports:
+      - 8055
+    networks:
+      - directus
+      - traefik_network
+    depends_on:
+      - directus-cache
+    environment:
+      KEY: '{{  directus_key[server_index | int]  }}'
+      SECRET: '{{  directus_secret[server_index | int]  }}'
+      DB_CLIENT: 'pg'
+      DB_HOST: 'directus-database'
+      DB_PORT: '5432'
+      DB_DATABASE: 'directus'
+      DB_USER: 'directus'
+      DB_PASSWORD: 'directus'
+
+      {%+ if server_index == "0" -%}
+      CACHE_ENABLED: 'false'
+      {%+ else -%}
+      CACHE_ENABLED: 'true'
+      {%- endif +%}
+      CACHE_STORE: 'redis'
+      REDIS: 'redis://directus-cache:6379'
+      CACHE_TTL: "60s"
+
+      EMAIL_TRANSPORT: 'smtp'
+      EMAIL_FROM: '{{ smtp_user[server_index | int] }}'
+      EMAIL_SMTP_HOST: '{{ smtp_host[server_index | int] }}'
+      # EMAIL_SMTP_PORT: '{{ smtp_port[server_index | int] }}'
+      EMAIL_SMTP_USER: '{{ smtp_user[server_index | int] }}'
+      EMAIL_SMTP_PASSWORD: "{{ smtp_password[server_index | int] }}"
+      # EMAIL_SMTP_SECURE: 'true'
+      # EMAIL_SMTP_TLS_CIPHERS: 'ALL'
+      PUBLIC_URL: "https://{{  subdomain[server_index | int]  }}"
+
+      CORS_ENABLED: "true"
+      CORS_ORIGIN: "true"
+
+      STORAGE_LOCAL_ROOT: "/directus/uploads"
+
+      IMPORT_IP_DENY_LIST: "169.254.169.254"
+
+      {%+ if server_index == "0" -%}
+      SCHEMA_SYNC: "EXPORT"
+      {%+ else -%}
+      SCHEMA_SYNC: "IMPORT"
+      {%- endif +%}
+
+      # Environment Variables for flows
+
+      ADMIN_EMAIL: '{{ directus_admin_mail[server_index | int] }}'
+      ADMIN_PASSWORD: '{{  directus_admin_pw[server_index | int]  }}'
+      
+      FLOWS_ENV_ALLOW_LIST: 'ADMIN_EMAIL,ADMIN_PASSWORD'
+
+    volumes:
+      - directus_storage:/directus/uploads
+      - ./schema-sync:/directus/schema-sync 
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.directus.loadbalancer.server.port=8055"
+      - "traefik.docker.network=traefik_network"
+      # https
+      - "traefik.http.routers.directus.rule=Host(`{{  subdomain[server_index | int]  }}`)"
+      - "traefik.http.routers.directus.tls=true"
+      - "traefik.http.routers.directus.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.directus.entrypoints=websecure"
+      # http (redirect to https)
+      - "traefik.http.routers.directus-http.rule=Host(`{{  subdomain[server_index | int]  }}`)"
+      - "traefik.http.routers.directus-http.entrypoints=web"
+      - "traefik.http.routers.directus-http.middlewares=redirect-to-https@file"
+
+networks:
+  traefik_network:
+    external: true
+  directus:
+
+volumes:
+  directus_database:
+  directus_storage: 
+
+
+  

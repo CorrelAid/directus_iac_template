@@ -1,0 +1,94 @@
+---
+- name: Main Playbook
+  hosts: all
+  gather_facts: true
+  become: false
+  vars_files:
+    - group_vars/group_vars.yml
+    - group_vars/vault.yml
+
+  tasks:
+    - name: Ensure server is CIS compliant
+      block:
+        - name: Check if the flag file exists
+          ansible.builtin.stat:
+            path: /home/{{ ansible_user }}/cis_compliant
+          register: flag_file_check
+        - name: Execute CIS role and creat flag file when finished
+          when: not flag_file_check.stat.exists
+          become: true
+          block:
+            - name: Execute CIS role
+              ansible.builtin.include_role:
+                name: ansible-lockdown.ubuntu22-cis
+              vars:
+                # https://github.com/ansible-lockdown/ubtu22-CIS/blob/devel/defaults/main.yml
+                ubtu22cis_section1_patch: true
+                ubtu22cis_section2_patch: true
+                ubtu22cis_section3_patch: false
+                ubtu22cis_section4_patch: true
+                ubtu22cis_section5_patch: true
+                ubtu22cis_section6_patch: true
+                ubtu22cis_rule_1_1_1_2: false
+                ubtu22cis_rule_5_3_4: false
+                ubtu22cis_sshd:
+                  log_level: "INFO"
+                  max_auth_tries: 4
+                  client_alive_interval: 299
+                  client_alive_count_max: 2
+                  ciphers:
+                    - chacha20-poly1305@openssh.com
+                    - aes256-gcm@openssh.com
+                    - aes128-gcm@openssh.com
+                    - aes256-ctr
+                    - aes192-ctr
+                    - aes128-ctr
+                  macs:
+                    - hmac-sha2-512-etm@openssh.com
+                    - hmac-sha2-256-etm@openssh.com
+                    - hmac-sha2-512
+                    - hmac-sha2-256
+                  kex_algorithms:
+                    - curve25519-sha256
+                    - curve25519-sha256@libssh.org
+                    - diffie-hellman-group14-sha256
+                    - diffie-hellman-group16-sha512
+                    - diffie-hellman-group18-sha512
+                    - ecdh-sha2-nistp521
+                    - ecdh-sha2-nistp384
+                    - ecdh-sha2-nistp256
+                    - diffie-hellman-group-exchange-sha256
+                  login_grace_time: 59
+                  max_sessions: 2
+                  allow_users: "{{ ansible_user }}"
+                  deny_users: []
+                  deny_groups: []
+                ubtu22cis_ipv4_required: true
+                ubtu22cis_no_owner_adjust: false
+                ubtu22cis_no_group_adjust: false
+                ubtu22cis_set_boot_pass: false
+                ubtu22cis_set_grub_user_pass: false
+                # ubtu22cis_grub_user_passwd: "{{ grub_pw | b64encode }}"
+            - name: Create flag file
+              ansible.builtin.file:
+                path: /home/{{ ansible_user }}/cis_compliant
+                state: touch
+                mode: "0644"
+            - name: Unconditionally reboot the machine with all defaults
+              ansible.builtin.reboot:
+    # - name: Add SSH keys
+    #   ansible.builtin.include_tasks: "tasks/add_ssh_keys.yml"
+    - name: Install Docker and Docker Compose Python Packages
+      ansible.builtin.pip:
+        name:
+          - requests==2.31.0
+          - docker==7.1.0
+          - docker-compose==1.29.2
+        state: present
+    - name: Deploy traefik
+      ansible.builtin.include_tasks: "tasks/deploy_traefik.yml"
+    - name: Set server index
+      ansible.builtin.set_fact:
+        server_index: "{{ 1 if 'prod' in ansible_hostname else 0 | int }}"
+    - name: Deploy directus
+      ansible.builtin.include_tasks: "tasks/deploy_directus.yml"

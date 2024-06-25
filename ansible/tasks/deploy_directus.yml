@@ -1,0 +1,72 @@
+- name: Create directory for Docker
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user }}/directus"
+    state: directory
+    owner: "{{ ansible_user }}"
+    mode: "0775"
+
+- name: Print server index
+  ansible.builtin.debug:
+    msg: "{{ server_index }}"
+
+- name: Copy Dockerfile
+  ansible.builtin.copy:
+    src: "files/directus/Dockerfile"
+    dest: "/home/{{  ansible_user }}/directus/Dockerfile"
+    mode: "0775"
+
+- name: Template docker compose to server
+  ansible.builtin.template:
+    src: "templates/directus-docker-compose.yml.jinja"
+    dest: "/home/{{  ansible_user }}/directus/docker-compose.yml"
+    mode: "0775"
+
+- name: Copy email template files
+  ansible.builtin.copy:
+    src: "files/directus/email-templates/"
+    dest: "/home/{{ ansible_user }}/directus/email-templates/"
+    mode: "0775"
+
+- name: Deploying Directus
+  community.docker.docker_compose_v2:
+    project_src: "/home/{{ ansible_user }}/directus/"
+    state: present
+    build: always
+
+- name: Check if the flag file exists
+  ansible.builtin.stat:
+    path: "/home/{{ ansible_user }}/directus/schema-sync-installed"
+  register: schema_sync_flag_file_check
+
+- name: Create directory for schema sync extension
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user }}/directus/schema-sync"
+    state: directory
+    owner: "{{ ansible_user }}"
+    mode: "0775"
+  become: true
+  when: not schema_sync_flag_file_check.stat.exists
+
+- name: Copy schema-sync files
+  ansible.builtin.copy:
+    src: "../schema-sync/"
+    dest: "/home/{{ ansible_user }}/directus/schema-sync/"
+    mode: "0775"
+  when: (not schema_sync_flag_file_check.stat.exists and server_index == "0") or server_index == "1"
+
+- name: Install the schema sync extension
+  when: not schema_sync_flag_file_check.stat.exists
+  block:
+    - name: Install the schema sync extension's columns in the db
+      ansible.builtin.shell: |
+        docker exec -it directus npx directus schema-sync install
+    - name: Create flag file when succeeded
+      ansible.builtin.file:
+        path: "/home/{{ ansible_user }}/directus/schema-sync-installed"
+        state: touch
+        mode: "0644"
+
+- name: Import the schema
+  ansible.builtin.shell: |
+    docker exec -it directus npx directus schema-sync import
+  when: (not schema_sync_flag_file_check.stat.exists and server_index == "0") or server_index == "1"

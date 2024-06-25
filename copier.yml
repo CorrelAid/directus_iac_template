@@ -1,0 +1,76 @@
+project_name:
+    type: str
+    help: What is your project name? It should be lowercase and not contain spaces or special characters
+
+cloud:
+    type: str
+    help: Which cloud provider do you use?
+    choices:
+        - hetzner
+        - digitalOcean
+
+dev_server:
+    help: Provide server config for the dev server (depends on cloud provider, see input.yml)
+    type: yaml 
+    multiline: true
+
+prod_server:
+    help: Provide server config for the prod server (depends on cloud provider, see input.yml)
+    type: yaml 
+    multiline: true
+
+dev_dns:
+    help: Provide dns config (see input.yml)
+    type: yaml 
+    multiline: true
+
+prod_dns:
+    help: Provide dns config (see input.yml)
+    type: yaml 
+    multiline: true
+
+github:
+    help: Provide github config (see input.yml)
+    type: yaml 
+    multiline: true
+    secret: true
+
+dev_smtp:
+    help: Provide smtp config (see input.yml)
+    type: yaml 
+    multiline: true
+    secret: true
+
+prod_smtp:
+    help: Provide smtp config (see input.yml)
+    type: yaml 
+    multiline: true
+    secret: true
+
+dev_directus:
+    help: Provide directus config (see input.yml)
+    type: yaml 
+    multiline: true
+    secret: true
+
+prod_directus:
+    help: Provide directus config (see input.yml)
+    type: yaml 
+    multiline: true
+    secret: true
+
+ssh_key:
+    help: Provide ssh key to access the servers
+    type: str
+    secret: true
+
+vault_password:
+    help: Provide vault password
+    type: str
+    secret: true
+
+_tasks:
+    - echo "{{  ansible_vault_pw  }}" > ansible/.vault_pw
+    - ansible-vault encrypt ansible/group_vars/vault.yml 
+    - rm input.yml.tmpl
+    - rm input.yml

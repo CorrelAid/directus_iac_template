@@ -1,0 +1,51 @@
+---
+- name: Create dir for traefik
+  ansible.builtin.file:
+    path: "/home/{{  ansible_user }}/proxy"
+    state: directory
+    owner: "{{  ansible_user }}"
+    mode: "0775"
+
+- name: Copy Traefik files
+  ansible.builtin.copy:
+    src: "files/traefik_files/"
+    dest: "/home/{{ ansible_user }}/proxy/"
+    mode: "0775"
+
+- name: Template traefik.yml
+  ansible.builtin.template:
+    src: "templates/traefik.yml.jinja"
+    dest: "/home/{{ ansible_user }}/proxy/configs/traefik.yml"
+    mode: "0775"
+
+- name: Create certificate folder
+  ansible.builtin.file:
+    path: "/home/{{  ansible_user }}/proxy/certificates"
+    state: directory
+    owner: "{{  ansible_user }}"
+    mode: "0775"
+
+- name: Ensure acme.json exists
+  ansible.builtin.copy:
+    content: "{}"
+    dest: "/home/{{  ansible_user }}/proxy/certificates/acme.json"
+    force: false
+    owner: "{{  ansible_user }}"
+    mode: "0600"
+
+- name: Template traefik docker compose to server
+  ansible.builtin.template:
+    src: "templates/traefik-docker-compose.yml.jinja"
+    dest: "/home/{{ ansible_user }}/proxy/docker-compose.yml"
+    mode: "0775"
+
+
+- name: Create Traefik network
+  community.docker.docker_network:
+    name: traefik_network
+    state: present
+
+- name: Deploying Traefik
+  community.docker.docker_compose_v2:
+    project_src: "/home/{{ ansible_user }}/proxy/"
+    state: present

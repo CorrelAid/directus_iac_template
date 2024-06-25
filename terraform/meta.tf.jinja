@@ -1,0 +1,40 @@
+terraform {
+  required_providers {
+    hetznerdns = {
+      source  = "timohirt/hetznerdns"
+      version = "2.2.0"
+    }
+    {%+ if cloud == "digitalocean" -%}
+    digitalocean = {
+      source  = "digitalocean/digitalocean"
+      version = "~> 2.0"
+    }
+    {% elif cloud == "hetzner" %}
+     hcloud = {
+      source  = "hetznercloud/hcloud"
+      version = "1.39.0"
+    }
+    {% endif %}
+    github = {
+      source  = "integrations/github"
+      version = "5.26.0"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "2.4.0"
+    }
+  }
+}
+
+{%+ if cloud == "digitalocean" -%}
+provider "digitalocean" {}
+{% elif cloud == "hetzner" %}
+provider "hcloud" {}
+{% endif %}
+
+provider "hetznerdns" {}
+
+
+provider "github" {
+  owner = var.github.owner
+}

@@ -1,0 +1,62 @@
+## General
+project_name: test
+cloud: hetzner
+
+## tokens and vars for terraform
+ssh_key: ssh_key
+### server
+dev_server:
+  server_type: s-2vcpu-2gb
+  image: ubuntu-22-04-x64
+  location: fr1
+  backups: true
+  user: deployer
+prod_server:
+  server_type: s-2vcpu-2gb
+  image: ubuntu-22-04-x64
+  location: fr1
+  backups: true
+  user: deployer
+### github
+github:
+  repo: repo
+  owner: owner
+### dns
+dev_dns:
+  domain: domain
+  subdomain: subdomain
+prod_dns:
+  domain: domain
+  subdomain: subdomain
+
+
+## vars for ansible
+### smtp
+dev_smtp:
+  user: user
+  password: password
+  host: mail.your-server.de
+  port: 587
+
+prod_smtp:
+  user: user
+  password: password
+  host: mail.your-server.de
+  port: 587
+## directus config
+dev_directus:
+  admin_mail: mail
+  admin_password: password
+  key: key
+  secret: secret
+
+prod_directus:
+  admin_mail: mail
+  admin_password: password
+  key: key
+  secret: secret
+
+
+
+
+

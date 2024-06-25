@@ -1,0 +1,66 @@
+variable "project_name" {
+  type        = string
+  description = "Project name"
+  default     = "{{project_name}}"
+
+}
+
+variable "server" {
+  type = list(object({
+      name        = string
+      server_type = string
+      image       = string
+      location    = string
+      backups     = bool
+      user        = string
+  }))
+  description = "Server configuration list"
+  default = [
+      {
+        name        = "{{project_name}}-dev"
+        server_type = "{{dev_server.server_type}}"
+        image       = "{{dev_server.image}}"
+        location    = "{{dev_server.location}}"
+        backups     = {{dev_server.backups}}
+        user        = "{{dev_server.user}}"
+      },
+      {
+        name        = "{{project_name}}-prod"
+        server_type = "{{prod_server.server_type}}"
+        image       = "{{prod_server.image}}"
+        location    = "{{prod_server.location}}"
+        backups     = {{prod_server.backups}}
+        user        = "{{prod_server.user}}"
+      }
+    ]
+  }
+
+variable "github" {
+  type        = map(any)
+  description = "Github config map"
+  default = {
+    repo  = "{{github.repo}}"
+    owner = "{{github.owner}}"
+  }
+}
+
+
+variable "dns" {
+  type = list(object({
+    zone      = string
+    subdomain = string
+  }))
+  description = "DNS configuration list"
+  default = [
+    {
+      zone      = "{{dev_dns.domain}}"
+      subdomain = "{{dev_dns.subdomain}}"
+    },
+    {
+      zone      = "{{prod_dns.domain}}"
+      subdomain = "{{prod_dns.subdomain}}"
+    }
+  ]
+}
+
+

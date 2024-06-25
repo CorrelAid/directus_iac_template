@@ -1,0 +1,5 @@
+---
+subdomain:
+%{ for index, item in subdomains ~}
+    - "${subdomains[index].subdomain}.${subdomains[index].zone}"
+%{ endfor ~}

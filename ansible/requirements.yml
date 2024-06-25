@@ -1,0 +1,6 @@
+- src: https://github.com/ansible-lockdown/UBUNTU22-CIS.git
+  name: ansible-lockdown.ubuntu22-cis
+
+- name: community.docker
+  src: https://github.com/ansible-collections/community.docker
+  version: 3.10.2

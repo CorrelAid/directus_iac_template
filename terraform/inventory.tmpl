@@ -1,0 +1,5 @@
+[servers]
+%{ for index, item in servers ~}
+${servers[index].name} ansible_host=${ips[index].ipv4_address} ansible_user=${servers[index].user}
+%{ endfor ~}
+
